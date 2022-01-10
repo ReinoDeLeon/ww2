@@ -34,20 +34,14 @@ public class MyGdxGame extends ApplicationAdapter {
 	@Override
 	public void create () {
 		batch = new SpriteBatch();
-		img = new Texture( "Aven Games Transparent.png");
 		stuka = new Texture("GER_Ju87R.png");
 		nightBackground = new Texture("sky.png");
 		sunBackground = new Texture("sky_sun.png");
 		ground = new Texture("road.png");
 		moon = new Texture("moon.png");
-		for (int i = 0; i < m147.length; i++) {
-			m147[i] = new Texture("417_" + i + ".png");
-		}
 		for (int i = 1; i < airExplotion.length; i++) {
 			airExplotion[i] = new Texture("E" + i + ".png");
 		}
-		deagle[0] = new Texture("DEagle_0.png");
-		deagle[1] = new Texture("DEagle_1.png");
 		explosionDamage = new Texture("crater1.png");
 		fence = new Texture("fence.png");
 		usBomber = new Texture("US_b17.png");
@@ -70,10 +64,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.draw(fence, explosionX+fence.getWidth(), -150);
 
 		batch.draw(airExplotion[airExplotionAnimation], X, y);
-		batch.draw(usMustang, x+60, 360);
-		batch.draw(usMustang, x-70, 530);
+		batch.draw(usMustang, x+80, 360);
+		batch.draw(usMustang, x-100, 530);
 		batch.draw(usBomber, x, 490);
-		batch.draw(usMustang, x+60, 590);
+		batch.draw(usMustang, x+90, 590);
 		batch.draw(usMustang, x-90, 390);
 		x++;
 		if (x%2==0){
@@ -84,7 +78,7 @@ public class MyGdxGame extends ApplicationAdapter {
 			}
 		}
 
-		if (x == Gdx.graphics.getWidth()+90) {
+		if (x == Gdx.graphics.getWidth()+100) {
 			//Si se sale del borde los aviones se generan a la izquierda
 			x = -120;
 		}
