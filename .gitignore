@@ -1,5 +1,7 @@
 ## Java
 
+/android/release
+
 *.class
 *.war
 *.ear
