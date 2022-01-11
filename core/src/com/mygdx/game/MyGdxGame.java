@@ -11,7 +11,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	SpriteBatch batch;
 	Texture img;
 	Texture stuka;
-	Texture usBomber;
+	Texture[] usBomber = new Texture[4];
 	Texture usMustang;
 	Texture sunBackground;
 	Texture nightBackground;
@@ -28,7 +28,7 @@ public class MyGdxGame extends ApplicationAdapter {
 	int y = 250;
 	int X = 20;
 	int explosionX = 200;
-
+	int bomberAnimation = 0;
 
 
 	@Override
@@ -44,7 +44,10 @@ public class MyGdxGame extends ApplicationAdapter {
 		}
 		explosionDamage = new Texture("crater1.png");
 		fence = new Texture("fence.png");
-		usBomber = new Texture("US_b17.png");
+		for (int i = 0; i < usBomber.length; i++) {
+			usBomber[i] = new Texture("B17_" + i + ".png");
+		}
+
 		usMustang = new Texture("US_p51.png");
 	}
 
@@ -66,7 +69,7 @@ public class MyGdxGame extends ApplicationAdapter {
 		batch.draw(airExplotion[airExplotionAnimation], X, y);
 		batch.draw(usMustang, x+80, 360);
 		batch.draw(usMustang, x-100, 530);
-		batch.draw(usBomber, x, 490);
+		batch.draw(usBomber[bomberAnimation], x, 490);
 		batch.draw(usMustang, x+90, 590);
 		batch.draw(usMustang, x-90, 390);
 		x++;
@@ -76,6 +79,12 @@ public class MyGdxGame extends ApplicationAdapter {
 			if (explosionX == -1920){
 				explosionX = 200;
 			}
+		}
+		if (bomberAnimation == 3){
+			bomberAnimation = 0;
+		}
+		else{
+			bomberAnimation++;
 		}
 
 		if (x == Gdx.graphics.getWidth()+100) {
