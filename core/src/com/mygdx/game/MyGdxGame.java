@@ -25,6 +25,8 @@ public class MyGdxGame extends ApplicationAdapter {
     Texture[] airExplosion = new Texture[26];
     Texture fence;
     Texture moon;
+    Texture font;
+    Texture[] touchToContinue = new Texture[3];
     int x = 0;
     int airExplosionAnimation = 1;
     int airExplosionAnimation2 = 1;
@@ -44,6 +46,7 @@ public class MyGdxGame extends ApplicationAdapter {
     int[] explosionX;
     Music backgroundMusic;
     Sound explosionSound;
+    private int continueAnimation = 0;
 
 
     @Override
@@ -69,7 +72,7 @@ public class MyGdxGame extends ApplicationAdapter {
             clouds[i] = new Texture("cloud_" + i + ".png");
         }
         for (int i = 0; i < usMustang.length; i++) {
-            usMustang[i] = new Texture("us_p51_" + i + ".png");
+            usMustang[i] = new Texture("US_P51_" + i + ".png");
         }
         cloudYPositions = new int[]{calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY()};
         cloudXPositions = new int[]{calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX()};
@@ -81,7 +84,10 @@ public class MyGdxGame extends ApplicationAdapter {
         backgroundMusic.play();
         backgroundMusic.setVolume(0.25f);
         explosionSound = Gdx.audio.newSound(Gdx.files.internal("bomb.wav"));
-
+        font = new Texture("introText.png");
+        for (int i = 0; i < touchToContinue.length; i++) {
+            touchToContinue[i] = new Texture("touchToContinue" + i + ".png");
+        }
     }
 
 
@@ -112,6 +118,19 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.draw(usBomber[bomberAnimation], x - 600, airplaneFormation[8]);
 
         batch.draw(airExplosion[airExplosionAnimation3], explosionX[5], explosionY[5]);
+
+        batch.draw(font, Gdx.graphics.getWidth()/4, Gdx.graphics.getHeight()/2);
+
+        if (x%20 > 0 && x%20<10){
+            batch.draw(touchToContinue[0], Gdx.graphics.getWidth()/100, Gdx.graphics.getHeight()/2 - font.getHeight() - 20);
+            if (continueAnimation == touchToContinue.length - 1){
+
+                continueAnimation = 0;
+            }
+            else {
+                continueAnimation++;
+            }
+        }
 
         x++;
         if (x % 2 == 0) {
