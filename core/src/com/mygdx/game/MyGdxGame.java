@@ -2,11 +2,11 @@ package com.mygdx.game;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class MyGdxGame extends ApplicationAdapter {
@@ -15,7 +15,7 @@ public class MyGdxGame extends ApplicationAdapter {
     Texture img;
     Texture stuka;
     Texture[] usBomber = new Texture[4];
-    Texture usMustang;
+    Texture[] usMustang = new Texture[8];
     Texture sunBackground;
     Texture nightBackground;
     Texture ground;
@@ -25,7 +25,6 @@ public class MyGdxGame extends ApplicationAdapter {
     Texture[] airExplosion = new Texture[26];
     Texture fence;
     Texture moon;
-    int bomberHeight;
     int x = 0;
     int airExplosionAnimation = 1;
     int airExplosionAnimation2 = 1;
@@ -35,6 +34,7 @@ public class MyGdxGame extends ApplicationAdapter {
     int X = 20;
     int groundPosition = 200;
     int bomberAnimation = 0;
+    int fighterPlaneAnimation = 0;
     int[] cloudXPositions;
     int[] cloudYPositions;
     private double skyMinimum = 400;
@@ -42,6 +42,8 @@ public class MyGdxGame extends ApplicationAdapter {
     int skyMaximum;
     int[] explosionY;
     int[] explosionX;
+    Music backgroundMusic;
+    Sound explosionSound;
 
 
     @Override
@@ -66,13 +68,20 @@ public class MyGdxGame extends ApplicationAdapter {
         for (int i = 0; i < clouds.length; i++) {
             clouds[i] = new Texture("cloud_" + i + ".png");
         }
-        usMustang = new Texture("US_p51.png");
+        for (int i = 0; i < usMustang.length; i++) {
+            usMustang[i] = new Texture("us_p51_" + i + ".png");
+        }
         cloudYPositions = new int[]{calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY()};
         cloudXPositions = new int[]{calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX()};
         airplaneFormation = new int[]{calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY()};
         skyMaximum = Gdx.graphics.getHeight() - 400;
         explosionY = new int[]{calculateY(), calculateY(), calculateY(), calculateY(), calculateY(), calculateY()};
         explosionX = new int[]{calculateX(), calculateX(), calculateX(), calculateX(), calculateX(), calculateX()};
+        backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("AirBattleRaidSound.wav"));
+        backgroundMusic.play();
+        backgroundMusic.setVolume(0.25f);
+        explosionSound = Gdx.audio.newSound(Gdx.files.internal("bomb.wav"));
+
     }
 
 
@@ -84,22 +93,22 @@ public class MyGdxGame extends ApplicationAdapter {
         batch.begin();
         batch.draw(groundBackground, 0, 0);
         batch.draw(airExplosion[airExplosionAnimation], explosionX[0], explosionY[0]);
-        batch.draw(usMustang, x + 250, airplaneFormation[0]);
-        batch.draw(usMustang, x - 300, airplaneFormation[1]);
+        batch.draw(usMustang[fighterPlaneAnimation], x + 250, airplaneFormation[0]);
+        batch.draw(usMustang[fighterPlaneAnimation], x - 300, airplaneFormation[1]);
         batch.draw(airExplosion[airExplosionAnimation], explosionX[1], explosionY[1]);
-        batch.draw(usMustang, x - 370, airplaneFormation[2]);
-        batch.draw(usMustang, x - 200, airplaneFormation[3]);
+        batch.draw(usMustang[fighterPlaneAnimation], x - 370, airplaneFormation[2]);
+        batch.draw(usMustang[fighterPlaneAnimation], x - 200, airplaneFormation[3]);
 
         batch.draw(airExplosion[airExplosionAnimation], explosionX[2], explosionY[2]);
         batch.draw(usBomber[bomberAnimation], x, airplaneFormation[4]);
-        batch.draw(usMustang, x - 750, airplaneFormation[5]);
+        batch.draw(usMustang[fighterPlaneAnimation], x - 750, airplaneFormation[5]);
 
         batch.draw(airExplosion[airExplosionAnimation2], explosionX[3], explosionY[3]);
         drawClouds(batch);
-        batch.draw(usMustang, x + 120, airplaneFormation[6]);
+        batch.draw(usMustang[fighterPlaneAnimation], x + 120, airplaneFormation[6]);
 
         batch.draw(airExplosion[airExplosionAnimation2], explosionX[4], explosionY[4]);
-        batch.draw(usMustang, x - 110, airplaneFormation[7]);
+        batch.draw(usMustang[fighterPlaneAnimation], x - 110, airplaneFormation[7]);
         batch.draw(usBomber[bomberAnimation], x - 600, airplaneFormation[8]);
 
         batch.draw(airExplosion[airExplosionAnimation3], explosionX[5], explosionY[5]);
@@ -117,6 +126,11 @@ public class MyGdxGame extends ApplicationAdapter {
         } else {
             bomberAnimation++;
         }
+        if (fighterPlaneAnimation == 7) {
+            fighterPlaneAnimation = 0;
+        } else {
+            fighterPlaneAnimation++;
+        }
 
         if (x == Gdx.graphics.getWidth() + +750) {
             //Si se sale del borde los aviones se generan a la izquierda
@@ -125,7 +139,7 @@ public class MyGdxGame extends ApplicationAdapter {
             }
             x = -750;
         }
-        if (x % 3 == 0) {
+        if (x % 6 == 0) {
             if (airExplosionAnimation2 == airExplosion.length - 1) {
                 for (int i = 2; i < 4; i++) {
                     explosionY[i] = calculateY();
@@ -133,6 +147,8 @@ public class MyGdxGame extends ApplicationAdapter {
                 for (int i = 2; i < 4; i++) {
                     explosionX[i] = calculateX();
                 }
+
+                explosionSound.play(0.2f);
                 airExplosionAnimation2 = 1;
             } else {
                 airExplosionAnimation2++;
@@ -149,6 +165,7 @@ public class MyGdxGame extends ApplicationAdapter {
             }
         }
         if (x % 4 == 0) {
+
             if (airExplosionAnimation3 == airExplosion.length - 1) {
                 for (int i = 4; i < 5; i++) {
                     explosionY[i] = calculateY();
@@ -156,6 +173,8 @@ public class MyGdxGame extends ApplicationAdapter {
                 for (int i = 4; i < 5; i++) {
                     explosionX[i] = calculateX();
                 }
+
+                explosionSound.play(0.2f);
                 airExplosionAnimation3 = 1;
             } else {
                 airExplosionAnimation3++;
@@ -169,6 +188,7 @@ public class MyGdxGame extends ApplicationAdapter {
                 for (int i = 0; i < 2; i++) {
                     explosionX[i] = calculateX();
                 }
+                explosionSound.play(0.2f);
                 airExplosionAnimation = 1;
             } else {
                 airExplosionAnimation++;
@@ -181,6 +201,7 @@ public class MyGdxGame extends ApplicationAdapter {
     public void dispose() {
         batch.dispose();
         img.dispose();
+        backgroundMusic.dispose();
     }
 
     public int calculateY() {
